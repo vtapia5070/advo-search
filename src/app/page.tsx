@@ -1,6 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 
 interface Advocate {
     id: string;
@@ -62,45 +72,58 @@ export default function Home() {
                 <p>
                     Searching for: <span id='search-term'>{searchTerm}</span>
                 </p>
-                <input
-                    style={{ border: '1px solid black' }}
-                    onChange={onChange}
-                />
-                <button onClick={onClick}>Reset Search</button>
+                <form className='grid grid-cols-12 gap-4'>
+                    <Input
+                        type='text'
+                        className='col-span-10'
+                        placeholder='Search for advocate'
+                    />
+                    <Button
+                        variant='secondary'
+                        className='col-span-2'
+                        onClick={onClick}
+                    >
+                        Reset Search
+                    </Button>
+                </form>
             </div>
             <br />
             <br />
-            <table>
-                <thead>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>City</th>
-                    <th>Degree</th>
-                    <th>Specialties</th>
-                    <th>Years of Experience</th>
-                    <th>Phone Number</th>
-                </thead>
-                <tbody>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>First Name</TableHead>
+                        <TableHead>Last Name</TableHead>
+                        <TableHead>City</TableHead>
+                        <TableHead>Degree</TableHead>
+                        <TableHead>Specialties</TableHead>
+                        <TableHead>Years of Experience</TableHead>
+                        <TableHead>Phone Number</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {filteredAdvocates.map((advocate, index) => {
                         // TODO make sure id is set and unique
                         return (
-                            <tr key={`${advocate.id}_${index}`}>
-                                <td>{advocate.firstName}</td>
-                                <td>{advocate.lastName}</td>
-                                <td>{advocate.city}</td>
-                                <td>{advocate.degree}</td>
-                                <td>
+                            <TableRow key={`${advocate.id}_${index}`}>
+                                <TableCell>{advocate.firstName}</TableCell>
+                                <TableCell>{advocate.lastName}</TableCell>
+                                <TableCell>{advocate.city}</TableCell>
+                                <TableCell>{advocate.degree}</TableCell>
+                                <TableCell>
                                     {advocate.specialties.map((s) => (
                                         <div>{s}</div>
                                     ))}
-                                </td>
-                                <td>{advocate.yearsOfExperience}</td>
-                                <td>{advocate.phoneNumber}</td>
-                            </tr>
+                                </TableCell>
+                                <TableCell>
+                                    {advocate.yearsOfExperience}
+                                </TableCell>
+                                <TableCell>{advocate.phoneNumber}</TableCell>
+                            </TableRow>
                         );
                     })}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </main>
     );
 }
