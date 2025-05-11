@@ -1,34 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Advocate } from '@/types/advocate';
+import { useState } from 'react';
 import AdvocateTable from '@/components/AdvocateTable/AdvocateTable';
 import SearchForm from '@/components/SearchForm/SearchForm';
+import { useFetchAdvocates } from '@/hooks/useFetchAdvocates';
 
 export default function Home() {
-    const [advocates, setAdvocates] = useState<Advocate[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-
-    const fetchAdvocates = async () => {
-        const url = searchTerm
-            ? `/api/advocates?q=${encodeURIComponent(searchTerm)}`
-            : '/api/advocates';
-
-        const response = await fetch(url);
-        response.json().then((jsonResponse) => {
-            console.log('total advocates', jsonResponse.meta.total);
-            setAdvocates(jsonResponse.data);
-        });
-    };
-
-    useEffect(() => {
-        console.log('fetching advocates...');
-
-        fetchAdvocates();
-    }, [searchTerm]);
+    const { advocates, isLoading, error, fetchAdvocates } =
+        useFetchAdvocates(searchTerm);
 
     const onChange = (searchStr: string) => {
         setSearchTerm(searchStr);
+        fetchAdvocates();
         console.log('filtering advocates...');
     };
 
