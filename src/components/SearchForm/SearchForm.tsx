@@ -1,24 +1,20 @@
-import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 interface SearchProps {
     onSearch: (searchTerm: string) => void;
     onReset: () => void;
+    searchTerm: string;
 }
 
-export default function SearchForm({ onSearch, onReset }: SearchProps) {
-    const [searchTerm, setSearchTerm] = useState('');
-
+export default function SearchForm({
+    onSearch,
+    onReset,
+    searchTerm,
+}: SearchProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newSearchTerm = e.target.value;
-        setSearchTerm(newSearchTerm);
         onSearch(newSearchTerm);
-    };
-
-    const handleReset = () => {
-        setSearchTerm('');
-        onReset();
     };
 
     return (
@@ -26,14 +22,16 @@ export default function SearchForm({ onSearch, onReset }: SearchProps) {
             <form className='grid grid-cols-12 gap-4'>
                 <Input
                     type='text'
-                    className='col-span-10'
+                    className='col-span-10 text-gray-700 bg-white border border-gray-200'
                     placeholder='Search for advocate'
                     onChange={handleChange}
+                    value={searchTerm}
                 />
                 <Button
+                    type='button'
                     variant='secondary'
-                    className='col-span-2'
-                    onClick={handleReset}
+                    className='col-span-2 bg-white text-gray-700'
+                    onClick={onReset}
                 >
                     Reset Search
                 </Button>
