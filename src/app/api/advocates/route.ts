@@ -1,36 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ilike, or } from 'drizzle-orm';
 import db from '../../../db';
 import { advocates } from '../../../db/schema';
-import { advocateData } from '../../../db/seed/advocates';
 
 export async function GET(request: NextRequest) {
     try {
-        // Uncomment this line to use a database
-        // const data = await db.select().from(advocates);
-
         const { searchParams } = new URL(request.url);
         const searchTerm = searchParams.get('q')?.toLowerCase() || '';
 
-        // For now, using mock data
-        let data = advocateData;
-
-        // Apply search filter if search term is provided
-        if (searchTerm) {
-            data = data.filter(
-                (advocate) =>
-                    advocate.firstName.toLowerCase().includes(searchTerm) ||
-                    advocate.lastName.toLowerCase().includes(searchTerm) ||
-                    advocate.city.toLowerCase().includes(searchTerm) ||
-                    advocate.degree.toLowerCase().includes(searchTerm) ||
-                    advocate.specialties.some((s) =>
-                        s.toLowerCase().includes(searchTerm)
-                    ) ||
-                    advocate.yearsOfExperience
-                        .toString()
-                        .includes(searchTerm) ||
-                    advocate.phoneNumber.toString().includes(searchTerm)
-            );
-        }
+        let query = db.select().from(advocates);
+        const data = searchTerm
+            ? await query.where(
+                  or(
+                      ilike(advocates.firstName, `%${searchTerm}%`),
+                      ilike(advocates.lastName, `%${searchTerm}%`),
+                      ilike(advocates.city, `%${searchTerm}%`),
+                      ilike(advocates.degree, `%${searchTerm}%`)
+                  )
+              )
+            : await query;
 
         return NextResponse.json(
             {
