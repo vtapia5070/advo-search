@@ -8,40 +8,32 @@ import SearchForm from '@/components/SearchForm/SearchForm';
 export default function Home() {
     const [advocates, setAdvocates] = useState<Advocate[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+
+    const fetchAdvocates = async () => {
+        const url = searchTerm
+            ? `/api/advocates?q=${encodeURIComponent(searchTerm)}`
+            : '/api/advocates';
+
+        const response = await fetch(url);
+        response.json().then((jsonResponse) => {
+            console.log('total advocates', jsonResponse.meta.total);
+            setAdvocates(jsonResponse.data);
+        });
+    };
 
     useEffect(() => {
         console.log('fetching advocates...');
-        fetch('/api/advocates').then((response) => {
-            response.json().then((jsonResponse) => {
-                setAdvocates(jsonResponse.data);
-                setFilteredAdvocates(jsonResponse.data);
-            });
-        });
-    }, []);
+
+        fetchAdvocates();
+    }, [searchTerm]);
 
     const onChange = (searchStr: string) => {
         setSearchTerm(searchStr);
-        // todo: fix reset on empty string
         console.log('filtering advocates...');
-        const filteredAdvocates = advocates.filter((advocate) => {
-            return (
-                advocate.firstName.includes(searchTerm) ||
-                advocate.lastName.includes(searchTerm) ||
-                advocate.city.includes(searchTerm) ||
-                advocate.degree.includes(searchTerm) ||
-                advocate.specialties.includes(searchTerm) ||
-                advocate.yearsOfExperience.toString().includes(searchTerm) ||
-                advocate.phoneNumber.toString().includes(searchTerm)
-            );
-        });
-
-        setFilteredAdvocates(filteredAdvocates);
     };
 
     const onClick = () => {
-        console.log(advocates);
-        setFilteredAdvocates(advocates);
+        setSearchTerm('');
     };
 
     return (
@@ -54,11 +46,15 @@ export default function Home() {
                 <p>
                     Searching for: <span id='search-term'>{searchTerm}</span>
                 </p>
-                <SearchForm onReset={onClick} onSearch={onChange} />
+                <SearchForm
+                    onReset={onClick}
+                    onSearch={onChange}
+                    searchTerm={searchTerm}
+                />
             </div>
             <br />
             <br />
-            <AdvocateTable advocates={filteredAdvocates} />
+            <AdvocateTable advocates={advocates} />
         </main>
     );
 }
