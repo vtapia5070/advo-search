@@ -25,7 +25,10 @@ export async function GET(request: NextRequest) {
                     advocate.specialties.some((s) =>
                         s.toLowerCase().includes(searchTerm)
                     ) ||
-                    advocate.yearsOfExperience.toString().includes(searchTerm)
+                    advocate.yearsOfExperience
+                        .toString()
+                        .includes(searchTerm) ||
+                    advocate.phoneNumber.toString().includes(searchTerm)
             );
         }
 
