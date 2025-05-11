@@ -15,11 +15,13 @@ export function useFetchAdvocates(searchTerm: string) {
 
         const response = await fetch(url);
         if (!response.ok) {
+            setError('Failed to fetch advocates');
+            setIsLoading(false);
             throw new Error('Failed to fetch advocates');
         }
         const { data } = await response.json();
-        setAdvocates(data);
         setIsLoading(false);
+        setAdvocates(data);
     }, [searchTerm]);
 
     useEffect(() => {

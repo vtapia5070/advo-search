@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import AdvocateTable from '@/components/AdvocateTable/AdvocateTable';
 import SearchForm from '@/components/SearchForm/SearchForm';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useFetchAdvocates } from '@/hooks/useFetchAdvocates';
 
 export default function Home() {
@@ -22,23 +24,26 @@ export default function Home() {
 
     return (
         <main style={{ margin: '24px' }}>
-            <h1>Solace Advocates</h1>
-            <br />
-            <br />
-            <div>
-                <p>Search</p>
-                <p>
-                    Searching for: <span id='search-term'>{searchTerm}</span>
-                </p>
-                <SearchForm
-                    onReset={onClick}
-                    onSearch={onChange}
-                    searchTerm={searchTerm}
-                />
-            </div>
-            <br />
-            <br />
-            <AdvocateTable advocates={advocates} />
+            <SearchForm
+                onReset={onClick}
+                onSearch={onChange}
+                searchTerm={searchTerm}
+            />
+            {error ? (
+                <Alert variant='destructive'>
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            ) : (
+                <Card>
+                    <CardContent className='pt-6'>
+                        <AdvocateTable
+                            advocates={advocates}
+                            isLoading={isLoading}
+                        />
+                    </CardContent>
+                </Card>
+            )}
         </main>
     );
 }
